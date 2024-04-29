@@ -1,6 +1,14 @@
+###parameter
+arg=commandArgs(T)
+working_dictory=arg[1]###your working path
+span_size_length=arg[2]###the span size length of TD, the default is 1000
+breaks_seq=arg[3]###the interval size of TD, the default is seq(-1,6,0.1)
+fold_chang=arg[4]###the fold change cutoff of upregulated or downregulated genes 
+p_value=arg[5]###the p value cutoff of upregulated or downregulated genes 
+
 ##figure 1
 #############识别TD
-setwd("E:/NSCLC_TDP/LUSC/CNV")
+setwd(working_dictory)
 all_cnv<-read.table(file="TCGA-LUSC.masked_cnv.txt",sep="\t",header = T,stringsAsFactors=F)
 sample_name<-unique(all_cnv$sample)
 sample_cnv<-list()##每个样本的CNV信息
@@ -84,7 +92,7 @@ save(TDP_score,less20_name,file="TDP_score.Rdata")
 
 
 ##########模拟TDP score和OS或者RFS的关系,模拟发现TDP组别的生存要好
-setwd("E:/NSCLC_TDP/LUSC/CNV")
+setwd(working_dictory)
 options(stringsAsFactors=F)
 load("TDP_score.Rdata")
 library(mclust)
@@ -108,7 +116,7 @@ abline(v=value_b,lwd=2,col="red")
 save(TDP_group,NonTDP_group,file="patient_TDP_group.Rdata")
 
 ##########根据扩增长度划分TDP病人
-setwd("E:/NSCLC_TDP/LUSC/CNV")
+setwd(working_dictory)
 load("patient_TDP_group.Rdata")
 load("all_TD_frame.Rdata")
 options(stringsAsFactors=F)
@@ -117,11 +125,11 @@ span_size_log<-list()##每个样本里TD的长度分布
 for(i in 1:length(TDP_frame)){
 test_vec<-TDP_frame[[i]][TDP_frame[[i]]$TD_likegroup==1,]
 span_size<-test_vec$End-test_vec$Start
-span_size_log[[i]]<-log10(span_size/1000)
+span_size_log[[i]]<-log10(span_size/span_size_length)
 }
 names(span_size_log)<-names(TDP_frame)
 
-hist(unlist(span_size_log),fre=F,breaks = seq(-1,6,0.1))
+hist(unlist(span_size_log),fre=F,breaks = breaks_seq)
 
 library(mclust)
 set.seed(12345678)
@@ -216,7 +224,7 @@ p+stat_compare_means(comparisons = compar)+stat_compare_means(label.y = 1000)
 ##########figure 6
 ##临床
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUSC/clin")
+setwd(working_dictory)
 LUSC_clin<-read.table(file="TCGA-LUSC.GDC_phenotype.txt",sep="\t",header=T,na.strings=c("","NA"),quote='')
 rownames(LUSC_clin)<-LUSC_clin[,1]
 
@@ -273,7 +281,7 @@ plot(risk.fit,col = c(1,3,4,5,6),main=paste("Survival analysis based on TDP sign
 
 ##########figure 2
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUSC/CNV")
+setwd(working_dictory)
 all_cnv<-read.table(file="TCGA-LUSC.masked_cnv.txt",sep="\t",header = T)
 sample_name<-unique(all_cnv$sample)
 sample_cnv<-list()##每个样本的CNV信息
@@ -433,7 +441,7 @@ effct_matrix[i,test_group[[i]][j,]$sample]<-3
 }
 }
 }
-setwd("E:/NSCLC_TDP/LUSC/amp_effect")
+setwd(working_dictory)
 save(effct_matrix,file="group_1_effctmatrix.Rdata")
 phat <- hotmap(effct_matrix)
 
@@ -538,7 +546,7 @@ effct_matrix[i,test_group[[i]][j,]$sample]<-3
 }
 }
 }
-setwd("E:/NSCLC_TDP/LUSC/amp_effect")
+setwd(working_dictory)
 save(effct_matrix,file="only_2_3_effctmatrix.Rdata")
 phat <- hotmap(effct_matrix)
 
@@ -575,7 +583,7 @@ pheatmap(t(final_effect),cluster_row = FALSE,cluster_col = FALSE,
 ##########figure 3
 ###############提取中期样本里的MAF文件
 options(stringsAsFactors = F)
-setwd("E:/NSCLC_TDP/LUSC/mutation")
+setwd(working_dictory)
 load("E:/NSCLC_TDP/LUSC/CNV/patient_group.Rdata")#######每个组别的病人
 load("E:/NSCLC_TDP/LUSC/CNV/patient_TDP_group.Rdata")###############加入TDP组别
 group_1<-unique(c(only_1,only_1_2,only_1_3))
@@ -609,7 +617,7 @@ write.table(only_2_3index_frame,file="only_2_3index_frame.txt",col.names = F,row
 #####
 #########共同出现的突变基因
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUSC/mutation")
+setwd(working_dictory)
 LUSCgroup_1<-read.table(file="group_1_mutation_gene.txt",sep="\t",header = T)
 LUSConly_2_3<-read.table(file="only_2_3_mutation_gene.txt",sep="\t",header = T)
 
@@ -645,7 +653,7 @@ save(KEGG_result,GO_result,file="kegg&go.Rdata")
 
 ###共同通路
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUSC/mutation")
+setwd(working_dictory)
 load("kegg&go.Rdata")
 observed_path<-c('Natural killer cell mediated cytotoxicity','Mitophagy - animal','Toll-like receptor signaling pathway',
 'Autophagy - animal','Antigen processing and presentation','PD-L1 expression and PD-1 checkpoint pathway in cancer')
@@ -676,7 +684,7 @@ pr + theme_bw()
 
 ########mutation map BRCA_only_2_3的免疫通路
 ####only_2_3
-setwd("E:/NSCLC_TDP/LUSC/mutation/only_2_3")
+setwd(working_dictory)
 library(dplyr)
 new.mutations <- read.table("only_2_3.mutations.txt",header = T,sep = "\t",quote = "",stringsAsFactors = F)
 genes <- only_2_3_mutation
@@ -755,7 +763,7 @@ phat <- hotmap(new_genes_tumor_mutation_num)
 #########################FPKM&CNV
 ############所有LUAD的FPKM
 options(stringsAsFactors = F)
-setwd("/Share2/home/lanxun3/jacklee/NSCLC_TDP/LUSC")
+setwd(working_dictory)
 #setwd("E:/TDP/BRCA/TCGA/protein")
 all_exp<-read.table(file="TCGA-LUSC.htseq_fpkm.txt",sep = "\t",header = T,na.strings = c("NA"," "),quote = "")
 rownames(all_exp)<-strtrim(all_exp[,1],15)
@@ -766,7 +774,7 @@ save(pro_exp,file="pro_exp.Rdata")
 
 ########载入group_1的拷贝数矩阵
 options(stringsAsFactors = F)
-setwd("/Share2/home/lanxun3/jacklee/NSCLC_TDP/LUSC")
+setwd(working_dictory)
 load("patient_group.Rdata")
 load('pro_exp.Rdata')
 
@@ -805,8 +813,8 @@ color = colorRampPalette(c("#113F8C","white","#AF1E23"))(50),show_colnames = F,m
 dev.off()
 
 ###功能富集
-up_genes<-rownames(DEG_voom[with(DEG_voom, (P.Value<0.001 & logFC>=0)), ])##上调的基因集
-down_genes<-rownames(DEG_voom[with(DEG_voom, (P.Value<0.001& logFC<= 0)), ])##下调的基因集
+up_genes<-rownames(DEG_voom[with(DEG_voom, (P.Value<p_value & logFC>=fold_chang)), ])##上调的基因集
+down_genes<-rownames(DEG_voom[with(DEG_voom, (P.Value<p_value& logFC<= fold_chang)), ])##下调的基因集
 
 up_genes_entriz=na.omit(list[match(up_genes,list[,"ENSEMBL"]),][,2])
 down_genes_entriz=na.omit(list[match(down_genes,list[,"ENSEMBL"]),][,2])
@@ -832,7 +840,7 @@ dev.off()
 ############figure 5
 ##############CCLE drug
 ##########在所有样本数据里识别LUSC的病人拷贝数数据
-setwd("E:/NSCLC_TDP/CCLE/LUSC")
+setwd(working_dictory)
 options(stringsAsFactors=F)
 LUSC_sample<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUSC_sample.txt",sep="\t",header = T)
 all_sample_cnv<-read.table(file="E:/NSCLC_TDP/CCLE/CNV/CCLE_copynumber_2013-12-03.seg.txt",sep="\t",header = T)
@@ -1018,7 +1026,7 @@ save(NonTDP_group,only_1,only_2,only_3,only_1_2,only_1_3,only_2_3,file="patient_
 
 
 ##########在不同组别里病人药物的耐受性
-setwd("E:/NSCLC_TDP/CCLE/LUSC")
+setwd(working_dictory)
 options(stringsAsFactors=F)
 LUSC_drug<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUNG_drug.txt",sep="\t",header = T)
 load("patient_group.Rdata")
