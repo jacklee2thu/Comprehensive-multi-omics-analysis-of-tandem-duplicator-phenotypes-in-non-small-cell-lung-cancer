@@ -1,7 +1,14 @@
+###parameter
+arg=commandArgs(T)
+working_dictory=arg[1]###your working path
+span_size_length=arg[2]###the span size length of TD, the default is 1000
+breaks_seq=arg[3]###the interval size of TD, the default is seq(-1,6,0.1)
+span_size_length=arg[2]###the span size length of TD, the default is 1000
+
 ##figure 1
-#############识别TD
+#############recognize TD
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUAD/CNV")
+setwd(working_dictory)
 all_cnv<-read.table(file="TCGA-LUAD.masked_cnv.txt",sep="\t",header = T)
 sample_name<-unique(all_cnv$sample)
 sample_cnv<-list()##每个样本的CNV信息
@@ -118,7 +125,7 @@ span_size_log<-list()##每个样本里TD的长度分布
 for(i in 1:length(TDP_frame)){
 test_vec<-TDP_frame[[i]][TDP_frame[[i]]$TD_likegroup==1,]
 span_size<-test_vec$End-test_vec$Start
-span_size_log[[i]]<-log10(span_size/1000)
+span_size_log[[i]]<-log10(span_size/span_size_length)
 }
 names(span_size_log)<-names(TDP_frame)
 
