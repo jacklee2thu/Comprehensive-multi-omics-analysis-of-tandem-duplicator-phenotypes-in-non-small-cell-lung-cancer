@@ -3,7 +3,8 @@ arg=commandArgs(T)
 working_dictory=arg[1]###your working path
 span_size_length=arg[2]###the span size length of TD, the default is 1000
 breaks_seq=arg[3]###the interval size of TD, the default is seq(-1,6,0.1)
-span_size_length=arg[2]###the span size length of TD, the default is 1000
+fold_chang=arg[4]###the fold change cutoff of upregulated or downregulated genes 
+adj_p=arg[5]###the adjust p value cutoff of upregulated or downregulated genes 
 
 ##figure 1
 #############recognize TD
@@ -121,19 +122,19 @@ load("patient_TDP_group.Rdata")
 load("all_TD_frame.Rdata")
 options(stringsAsFactors=F)
 TDP_frame<-all_TD_frame[TDP_group]##TDP病人
-span_size_log<-list()##每个样本里TD的长度分布
+span_size_<-list()##每个样本里TD的长度分布
 for(i in 1:length(TDP_frame)){
 test_vec<-TDP_frame[[i]][TDP_frame[[i]]$TD_likegroup==1,]
 span_size<-test_vec$End-test_vec$Start
-span_size_log[[i]]<-log10(span_size/span_size_length)
+span_size_[[i]]<-10(span_size/span_size_length)
 }
-names(span_size_log)<-names(TDP_frame)
+names(span_size_)<-names(TDP_frame)
 
-hist(unlist(span_size_log),fre=F,breaks = seq(-1,6,0.1))
+hist(unlist(span_size_),fre=F,breaks = breaks_seq)
 
 library(mclust)
 set.seed(12345678)
-all_TD_size<-unlist(span_size_log)
+all_TD_size<-unlist(span_size_)
 span_size_distri<-Mclust(all_TD_size)
 
 library(mixtools)
@@ -148,10 +149,10 @@ class_2<-range(all_TD_size[span_size_distri$classification==2])##1.85~2.71
 class_3<-range(all_TD_size[span_size_distri$classification==3])##2.71~3.85
 
 group_list<-list()
-for(i in 1:length(span_size_log)){
-group_list[[i]]<-c(length(which(class_1[1]<span_size_log[[i]]&span_size_log[[i]]<class_1[2])),length(which(class_2[1]<span_size_log[[i]]&span_size_log[[i]]<class_2[2])),length(which(class_3[1]<span_size_log[[i]]&span_size_log[[i]]<class_3[2])))
+for(i in 1:length(span_size_)){
+group_list[[i]]<-c(length(which(class_1[1]<span_size_[[i]]&span_size_[[i]]<class_1[2])),length(which(class_2[1]<span_size_[[i]]&span_size_[[i]]<class_2[2])),length(which(class_3[1]<span_size_[[i]]&span_size_[[i]]<class_3[2])))
 }
-names(group_list)<-names(span_size_log)
+names(group_list)<-names(span_size_)
 group_set<-as.data.frame(group_list)
 rownames(group_set)<-c("small_span","class_2","large_span")
 colnames(group_set)<-names(group_list)
@@ -248,8 +249,8 @@ tumor_stage.diagnoses[tumor_stage.diagnoses=="stage iiib"]<-"Stage III"
 tumor_stage.diagnoses[tumor_stage.diagnoses=="not reported"]<-NA
 barplot(table(new_final_group,tumor_stage.diagnoses),col=2:6)
 barplot(table(new_final_group,primary_therapy_outcome_success),col=2:6)
-barplot(table(new_final_group,pathologic_M),col=2:6)
-boxplot(age_at_initial_pathologic_diagnosis~new_final_group,col = 2:6)
+barplot(table(new_final_group,pathoic_M),col=2:6)
+boxplot(age_at_initial_pathoic_diagnosis~new_final_group,col = 2:6)
 
 
 ########预后
@@ -293,7 +294,7 @@ sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
 names(sample_cnv)<-sample_name
 chr_name<-unique(sample_cnv[[1]]$Chrom)###23条染色体
-##条件：0.扩增子长度大于100b 1.扩增子 2.比相邻片段log rd >0.3 3.两个相邻片段差距<0.3
+##条件：0.扩增子长度大于100b 1.扩增子 2.比相邻片段 rd >0.3 3.两个相邻片段差距<0.3
 all_sample_chr_cv<-list()###纪录每个病人每条染色体的CNV信息，是否有TD
 for(w in 1:length(sample_cnv)){
 sample_chr_cnv<-list()##每个病人的每条染色体的CNV信息
@@ -780,7 +781,7 @@ fit <- lmFit(v,design)
 fit2 <- eBayes(fit)
 tempOutput = topTable(fit2, coef=2, n=Inf)
 DEG_voom = na.omit(tempOutput)
-DEG_voom_can <- DEG_voom[with(DEG_voom, (adj.P.Val<0.01&abs(logFC)>=1)), ]
+DEG_voom_can <- DEG_voom[with(DEG_voom, (adj.P.Val<0.01&abs(FC)>=1)), ]
 proper_gene<-rownames(DEG_voom_can[order(DEG_voom_can$logFC,decreasing = T),])
 final_frame<-deg_matrix[proper_gene,]
 library(org.Hs.eg.db)
@@ -799,8 +800,8 @@ color = colorRampPalette(c("#113F8C","white","#AF1E23"))(50),show_colnames = F,m
 dev.off()
 
 ###功能富集
-up_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<0.01 & logFC>=1)), ])##上调的基因集
-down_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<0.01 & logFC<= -1)), ])##下调的基因集
+up_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<adj_p & logFC>=fold_chang)), ])##上调的基因集
+down_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<adj_p & logFC<= -fold_chang)), ])##下调的基因集
 
 up_genes_entriz=na.omit(list[match(up_genes,list[,"ENSEMBL"]),][,2])
 down_genes_entriz=na.omit(list[match(down_genes,list[,"ENSEMBL"]),][,2])
