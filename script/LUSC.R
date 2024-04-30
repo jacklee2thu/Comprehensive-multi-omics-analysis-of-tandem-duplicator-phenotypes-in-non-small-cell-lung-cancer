@@ -7,21 +7,21 @@ fold_chang=arg[4]###the fold change cutoff of upregulated or downregulated genes
 p_value=arg[5]###the p value cutoff of upregulated or downregulated genes 
 
 ##figure 1
-#############识别TD
+#############recognize TD
 setwd(working_dictory)
 all_cnv<-read.table(file="TCGA-LUSC.masked_cnv.txt",sep="\t",header = T,stringsAsFactors=F)
 sample_name<-unique(all_cnv$sample)
-sample_cnv<-list()##每个样本的CNV信息
+sample_cnv<-list()##CNV information for each sample
 for(i in 1:length(sample_name)){
 sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
 names(sample_cnv)<-sample_name
 
-chr_name<-unique(sample_cnv[[1]]$Chrom)###23条染色体
-##条件：0.扩增子长度大于100b 1.扩增子 2.比相邻片段log rd >0.3 3.两个相邻片段差距<0.3
-all_sample_chr_cv<-list()###纪录每个病人每条染色体的CNV信息，是否有TD
+chr_name<-unique(sample_cnv[[1]]$Chrom)###23 chromosomes
+##conditions：0.length of amplicon larger than 100b 1. The log rd of amplicon; 2 is greater than 0.3; 3. The difference between two adjacent fragments is less than 0.3;
+all_sample_chr_cv<-list()###Record the CNV information of each chromosome of each patient, whether there is TD
 for(w in 1:length(sample_cnv)){
-sample_chr_cnv<-list()##每个病人的每条染色体的CNV信息
+sample_chr_cnv<-list()##CNV information for each chromosome of each patient
 for(j in 1:length(chr_name)){
 sample_chr_cnv[[j]]<-sample_cnv[[w]][sample_cnv[[w]]$Chrom==chr_name[j],]
 }
