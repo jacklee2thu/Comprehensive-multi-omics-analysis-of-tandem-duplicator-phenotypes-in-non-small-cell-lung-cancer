@@ -1,4 +1,5 @@
 Comprehensive multi-omics analysis of tandem duplicator phenotypes in non-small cell lung cancer
+
 The Tandem Duplicator Phenotype (TDP) stands out as a significant genomic feature commonly observed in non-small cell lung cancer (NSCLC). Comprehensive multi-omics datasets, encompassing DNA copy number variations, transcriptomics, somatic single-nucleotide variations, clinical records, and cell-line drug sensitivity profiles from projects like TCGA and CCLE, are meticulously examined to unveil the distinctive attributes associated with TDP.
 
 The example data was deposited in https://github.com/jacklee2thu/Comprehensive-multi-omics-analysis-of-tandem-duplicator-phenotypes-in-non-small-cell-lung-cancer/tree/main/data.
