@@ -6,4 +6,7 @@ The scirpts was deposited in https://github.com/jacklee2thu/Comprehensive-multi-
 
 The input example data includes DNA copy number variations (TCGA-LUAD.masked_cnv.txt,TCGA-LUSC.masked_cnv.txt), transcriptomics (https://xenabrowser.net/datapages/?cohort=GDC%20TCGA%20Lung%20Squamous%20Cell%20Carcinoma%20(LUSC)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443), somatic single-nucleotide variations (LUSC_only_2_3.maf), clinical records (TCGA-LUAD.GDC_phenotype.txt, TCGA-LUSC.GDC_phenotype.txt), and cell-line drug sensitivity profiles (https://xenabrowser.net/datapages/?cohort=Cancer%20Cell%20Line%20Encyclopedia%20(CCLE)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443).
 
-The outcome files are deposited in re
+The scripts LUSC.R and LUAD.R include 5 parameters, working_dictory indicates your working path; span_size_length indicates the span size length of TD, the default is 1000;breaks_seq indicates the interval size of TD, the default is seq(-1,6,0.1);fold_chang indicates the fold change cutoff of upregulated or downregulated genes; p_value indicates the p value cutoff of upregulated or downregulated genes (adj_p indicates the adjust p value cutoff of upregulated or downregulated genes in LUAD.R).
+The scripts LUSC.R and LUAD.R also include the outcome files figure 1-6.
+
+The outcome files are deposited in result directory.
