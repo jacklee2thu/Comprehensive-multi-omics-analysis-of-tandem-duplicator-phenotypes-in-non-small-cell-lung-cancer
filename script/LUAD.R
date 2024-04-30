@@ -12,7 +12,7 @@ options(stringsAsFactors=F)
 setwd(working_dictory)
 all_cnv<-read.table(file="TCGA-LUAD.masked_cnv.txt",sep="\t",header = T)
 sample_name<-unique(all_cnv$sample)
-sample_cnv<-list()##每个样本的CNV信息
+sample_cnv<-list()
 for(i in 1:length(sample_name)){
 sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
