@@ -18,11 +18,11 @@ sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
 names(sample_cnv)<-sample_name
 
-chr_name<-unique(sample_cnv[[1]]$Chrom)###23条染色体
-##条件：0.扩增子长度大于100b 1.扩增子 2.比相邻片段log rd >0.3 3.两个相邻片段差距<0.3
-all_sample_chr_cv<-list()###纪录每个病人每条染色体的CNV信息，是否有TD
+chr_name<-unique(sample_cnv[[1]]$Chrom)###23 chromosomes
+##conditions：0.length of amplicon larger than 100b 1. The log rd of amplicon; 2 is greater than 0.3; 3. The difference between two adjacent fragments is less than 0.3;
+all_sample_chr_cv<-list()###Record the CNV information of each chromosome of each patient, whether there is TD
 for(w in 1:length(sample_cnv)){
-sample_chr_cnv<-list()##每个病人的每条染色体的CNV信息
+sample_chr_cnv<-list()##CNV information for each chromosome of each patient
 for(j in 1:length(chr_name)){
 sample_chr_cnv[[j]]<-sample_cnv[[w]][sample_cnv[[w]]$Chrom==chr_name[j],]
 }
@@ -47,7 +47,7 @@ all_sample_chr_cv[[w]]<-sample_chr_cnv
 names(all_sample_chr_cv)<-sample_name
 
 
-#######计算每个样本的TD总和
+#######Calculate the total of TDS for each sample
 all_TD_frame<-list()
 for(i in 1:length(all_sample_chr_cv)){
 TD_frame<-data.frame()
@@ -58,7 +58,7 @@ TD_frame<-rbind(TD_frame,all_sample_chr_cv[[i]][[j]],stringsAsFactors=F)
 all_TD_frame[[i]]<-TD_frame
 }
 names(all_TD_frame)<-sample_name
-save(all_TD_frame,file="all_TD_frame.Rdata")####纪录每个病人的TD片段
+save(all_TD_frame,file="all_TD_frame.Rdata")####Record each patient's TD segment
 TD_num<-c()
 for(i in 1:length(all_TD_frame)){
 TD_num[i]<-sum(all_TD_frame[[i]]$TD_likegroup)
@@ -66,7 +66,7 @@ TD_num[i]<-sum(all_TD_frame[[i]]$TD_likegroup)
 names(TD_num)<-sample_name
 
 
-####计算每个染色体在所有样本里TD的均值
+####Calculate the mean TD of each chromosome in all samples
 chr_mean<-c()
 for(i in 1:length(chr_name)){
 chr_num<-c()
@@ -78,7 +78,7 @@ chr_mean[i]<-sum(chr_num)/length(all_sample_chr_cv)
 names(chr_mean)<-chr_name
 
 
-##################计算每个样本的TDP score
+##################Calculate the TDP score for each sample
 TDP_score<-c()
 for(i in 1:length(all_sample_chr_cv)){
 chr_abs<-c()
@@ -92,7 +92,7 @@ names(TDP_score)<-sample_name
 save(TDP_score,less20_name,file="TDP_score.Rdata")
 
 
-##########模拟TDP score和OS或者RFS的关系,模拟发现TDP组别的生存要好
+##########The relationship between TDP score and OS or RFS was simulated and the survival of TDP group was found to be better
 setwd("E:/NSCLC_TDP/LUAD/CNV")
 options(stringsAsFactors=F)
 load("TDP_score.Rdata")
@@ -107,7 +107,7 @@ value_b<-re_TDP_score[["parameters"]][["mean"]][["2"]]
 
 TDP_group<-rownames(dat[dat[,1]> value_b,])
 NonTDP_group<-rownames(dat[dat[,1]<=value_a,])
-##画图
+
 hist(TDP_score,breaks = seq(-2,0,0.05),freq = F)
 library(mixtools)
 mixmdl=normalmixEM(TDP_score,mu=re_TDP_score$parameters$mean,sigma=re_TDP_score$parameters$variance$sigmasq,epsilon=1e-3)
@@ -116,13 +116,13 @@ abline(v=value_a,lwd=2,col="blue")
 abline(v=value_b,lwd=2,col="red")
 save(TDP_group,NonTDP_group,file="patient_TDP_group.Rdata")
 
-##########根据扩增长度划分TDP病人
+##########TDP patients were divided according to amplification length
 setwd("E:/NSCLC_TDP/LUAD/CNV")
 load("patient_TDP_group.Rdata")
 load("all_TD_frame.Rdata")
 options(stringsAsFactors=F)
-TDP_frame<-all_TD_frame[TDP_group]##TDP病人
-span_size_<-list()##每个样本里TD的长度分布
+TDP_frame<-all_TD_frame[TDP_group]##TDP patient
+span_size_<-list()##The length distribution of TDS in each sample
 for(i in 1:length(TDP_frame)){
 test_vec<-TDP_frame[[i]][TDP_frame[[i]]$TD_likegroup==1,]
 span_size<-test_vec$End-test_vec$Start
@@ -142,7 +142,7 @@ mixmdl=normalmixEM(all_TD_size,mu=span_size_distri$parameters$mean,sigma=span_si
 plot(mixmdl,which=2)
 
 
-####类别里的片段范围
+####Range of fragments in a category
 class_0<-range(all_TD_size[span_size_distri$classification==1])##-1~0.414
 class_1<-range(all_TD_size[span_size_distri$classification==1])##0.416~0.846
 class_2<-range(all_TD_size[span_size_distri$classification==2])##1.85~2.71
@@ -157,11 +157,11 @@ group_set<-as.data.frame(group_list)
 rownames(group_set)<-c("small_span","class_2","large_span")
 colnames(group_set)<-names(group_list)
 
-####判断病人隶属于哪个组别
-sample_sum<-apply(group_set,2,sum)#####每个病人里1,2,3类的加和
+####Determine which group the patient belongs to
+sample_sum<-apply(group_set,2,sum)#####The sum of 1,2, and 3 classes per patient
 names(sample_sum)<-colnames(group_set)
 
-###比例矩阵，使用1/4来划分属于哪个组别
+###A proportional matrix, using 1/4 to determine which group you belong to
 new_group_list<-matrix(0,nrow=dim(group_set)[1],ncol=dim(group_set)[2])
 for(i in 1:dim(group_set)[2]){
 new_group_list[,i]<-group_set[,i]/sample_sum[i]
@@ -183,7 +183,7 @@ only_3<-setdiff(group_3,unique(union(group_1_3,group_2_3)))
 only_1_2<-setdiff(group_1_2,intersect(intersect(group_1,group_2),group_3))
 only_1_3<-setdiff(group_1_3,intersect(intersect(group_1,group_2),group_3))
 only_2_3<-group_2_3
-######分为6个不同的组别
+######It's divided into six different groups
 new_group_list[4,only_1]<-1
 new_group_list[4,only_2]<-2
 new_group_list[4,only_3]<-3
@@ -193,7 +193,7 @@ new_group_list[4,only_2_3]<-6
 final_group<-as.numeric(new_group_list[4,])
 names(final_group)<-colnames(new_group_list)
 save(NonTDP_group,only_1,only_2,only_3,only_1_2,only_1_3,only_2_3,file="patient_group.Rdata")
-##########计算每个组别基因组复杂度
+##########The genome complexity was calculated for each group
 complexity<-function(TDP_group){
 TDP_group_genome<-lapply(all_TD_frame[TDP_group],dim)
 num_amp_del<-c()
@@ -228,7 +228,7 @@ add = "jitter", shape = "group",ylim =c(0,1000))
 
 
 ##########figure 6
-##临床
+##clinical informations
 options(stringsAsFactors=F)
 setwd("E:/NSCLC_TDP/LUAD/clin")
 LUAD_clin<-read.table(file="TCGA-LUAD.GDC_phenotype.txt",sep="\t",header=T,na.strings=c("","NA"),quote='')
@@ -237,7 +237,7 @@ rownames(LUAD_clin)<-LUAD_clin[,1]
 new_LUAD_clin<-LUAD_clin[intersect(TDP_group,rownames(LUAD_clin)),]
 new_final_group<-final_group[intersect(rownames(new_LUAD_clin),names(final_group))]
 new_LUAD_clin<-cbind(new_LUAD_clin,new_final_group)
-##组别与TDP组别分析
+##Group and TDP group analysis
 attach(new_LUAD_clin)
 tumor_stage.diagnoses[tumor_stage.diagnoses=="stage i"]<-"Stage I"
 tumor_stage.diagnoses[tumor_stage.diagnoses=="stage ia"]<-"Stage I"
@@ -253,7 +253,7 @@ barplot(table(new_final_group,pathoic_M),col=2:6)
 boxplot(age_at_initial_pathoic_diagnosis~new_final_group,col = 2:6)
 
 
-########预后
+########prognosis
 new_LUAD_clin$RFS<-new_LUAD_clin$days_to_new_tumor_event_after_initial_treatment
 new_LUAD_clin$RFS_event<-new_LUAD_clin$new_tumor_event_after_initial_treatment
 new_LUAD_clin<-new_LUAD_clin[complete.cases(new_LUAD_clin$RFS_event),]
@@ -288,16 +288,16 @@ options(stringsAsFactors=F)
 setwd("E:/NSCLC_TDP/LUAD/CNV")
 all_cnv<-read.table(file="TCGA-LUAD.masked_cnv.txt",sep="\t",header = T)
 sample_name<-unique(all_cnv$sample)
-sample_cnv<-list()##每个样本的CNV信息
+sample_cnv<-list()##CNV information for each sample
 for(i in 1:length(sample_name)){
 sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
 names(sample_cnv)<-sample_name
-chr_name<-unique(sample_cnv[[1]]$Chrom)###23条染色体
-##条件：0.扩增子长度大于100b 1.扩增子 2.比相邻片段 rd >0.3 3.两个相邻片段差距<0.3
-all_sample_chr_cv<-list()###纪录每个病人每条染色体的CNV信息，是否有TD
+chr_name<-unique(sample_cnv[[1]]$Chrom)###23 chromosomes
+##conditions：0.length of amplicon larger than 100b 1. The log rd of amplicon; 2 is greater than 0.3; 3. The difference between two adjacent fragments is less than 0.3;
+all_sample_chr_cv<-list()
 for(w in 1:length(sample_cnv)){
-sample_chr_cnv<-list()##每个病人的每条染色体的CNV信息
+sample_chr_cnv<-list()
 for(j in 1:length(chr_name)){
 sample_chr_cnv[[j]]<-sample_cnv[[w]][sample_cnv[[w]]$Chrom==chr_name[j],]
 }
@@ -321,14 +321,14 @@ all_sample_chr_cv[[w]]<-sample_chr_cnv
 }
 names(all_sample_chr_cv)<-sample_name
 
-#####加载不同的组别
+
 load("E:/NSCLC_TDP/LUAD/CNV/patient_group.Rdata")
 group_1<-unique(c(only_1,only_1_2,only_1_3))
 
 
-#######UCSC选择有效扩增的TDP区域
+#######UCSC selects the TDP region that is effectively amplified
 UCSC_paragraph<-function(chr_cnv,GENE,chrname){
-invest_cnv<-list()#######存储每个OG/TSG涉及的数据框
+invest_cnv<-list()#######Stores the data frames involved in each OG/TSG
 for(j in 1:length(chr_cnv)){
 start_row<-c()
 end_row<-c()
@@ -345,7 +345,7 @@ invest_cnv[[j]]<-chr_cnv[[j]][[chrname]][start_row:end_row,]
 }
 }
 names(invest_cnv)<-names(chr_cnv)
-final_frame<-data.frame()########将OG/TSG涉及到的矩阵合并
+final_frame<-data.frame()########Merge the matrices involved in OG/TSG
 for(z in 1:length(invest_cnv)){
 test_frame<-as.data.frame(invest_cnv[[z]])
 final_frame<-rbind(final_frame,test_frame)
@@ -370,7 +370,7 @@ TDPamp_region$effect[q]<-"ST"
 return(TDPamp_region)
 }
 ######
-########研究only_2里的OG和TSG
+########Study OG and TSG in only_2
 only_2_chr_cnv<-all_sample_chr_cv[only_2]
 ##OG
 MAPK1<-c(22108789,22221970)
@@ -392,7 +392,7 @@ EXO5_chr<-"1"
 EXO5_group_1<-UCSC_paragraph(only_2_chr_cnv,EXO5,EXO5_chr)
 
 
-########构造TSG/OG影响的样本热图
+########The sample heat map influenced by TSG/OG was constructed
 library(pheatmap)
 hotmap<-function(x){
   pheatmap(x,cluster_row = FALSE,
@@ -402,7 +402,7 @@ hotmap<-function(x){
            cutree_rows=dim(x)[1],show_colnames=F,treeheight_row=0, treeheight_col=0,cellheight=20)
 }
 
-####group_1的矩阵
+####group_1
 effct_matrix<- matrix(0,nrow = 4,ncol =length(only_2_chr_cnv))
 rownames(effct_matrix)<-c("MAPK1","MLLT11","TMCO2","EXO5")
 colnames(effct_matrix)<-names(only_2_chr_cnv)
@@ -471,7 +471,7 @@ pheatmap(t(final_effect),cluster_row = FALSE,cluster_col = FALSE,
            cutree_rows=dim(final_effect)[1],show_colnames=F,treeheight_row=0, treeheight_col=0,cellheight=20)
 
 
-########研究only_2_3里的OG和TSG
+########OG and TSG in only_2_3 were studied
 only_2_3_chr_cnv<-all_sample_chr_cv[only_2_3]
 ##OG
 KRAS<-c(25357723,25403870)
@@ -492,7 +492,7 @@ KMT2B_chr<-"19"
 KMT2B_group_1<-UCSC_paragraph(only_2_3_chr_cnv,KMT2B,KMT2B_chr)
 
 
-########构造TSG/OG影响的样本热图
+
 library(pheatmap)
 hotmap<-function(x){
   pheatmap(x,cluster_row = FALSE,
@@ -502,7 +502,7 @@ hotmap<-function(x){
            cutree_rows=dim(x)[1],show_colnames=F,treeheight_row=0, treeheight_col=0,cellheight=20)
 }
 
-####group_1的矩阵
+####group_1
 effct_matrix<- matrix(0,nrow = 4,ncol =length(only_2_3_chr_cnv))
 rownames(effct_matrix)<-c("KRAS","EGFR","CAPRIN2","KMT2B")
 colnames(effct_matrix)<-names(only_2_3_chr_cnv)
@@ -571,41 +571,41 @@ pheatmap(t(final_effect),cluster_row = FALSE,cluster_col = FALSE,
            cutree_rows=dim(final_effect)[1],show_colnames=F,treeheight_row=0, treeheight_col=0,cellheight=20)
 		   
 ##########figure 3
-###############提取中期样本里的MAF文件
+###############Extract the MAF file from the interim sample
 options(stringsAsFactors = F)
 setwd("E:/NSCLC_TDP/LUAD/mutation")
-load("E:/NSCLC_TDP/LUAD/CNV/patient_group.Rdata")#######每个组别的病人
-load("E:/NSCLC_TDP/LUAD/CNV/patient_TDP_group.Rdata")###############加入TDP组别
+load("E:/NSCLC_TDP/LUAD/CNV/patient_group.Rdata")#######Each group of patients
+load("E:/NSCLC_TDP/LUAD/CNV/patient_TDP_group.Rdata")
 group_1<-unique(c(only_1,only_1_2,only_1_3))
-tumor_sample<-read.table(file="tumor_sample.txt",header = T,sep = "\t")####所有样本
+tumor_sample<-read.table(file="tumor_sample.txt",header = T,sep = "\t")####all samples
 tumor_sample_1<-strtrim(tumor_sample[,1],16)
 only_2_mut<-intersect(unique(tumor_sample_1),only_2)
 only_2_3_mut<-intersect(unique(tumor_sample_1),only_2_3)
 
 
-only_2index<-c()######表示哪些序数是分类样本
+only_2index<-c()#######Indicates which ordinals are classified samples
 for(i in 1:length(only_2_mut)){
 index1<-grep(only_2_mut[i],tumor_sample[,1])
 only_2index<-c(only_2index,index1)
 }
 only_2index_frame<-matrix(0,nrow = dim(tumor_sample)[1],ncol = 2)
 only_2index_frame[only_2index,]<-1
-only_2index_frame[,2]<-tumor_sample[,1]#########1表示分类样本
+only_2index_frame[,2]<-tumor_sample[,1]#########1Representation classification sample
 write.table(only_2index_frame,file="only_2index_frame.txt",col.names = F,row.names = F,sep="\t",quote=F)
 
-only_2_3index<-c()######表示哪些序数是分类样本
+only_2_3index<-c()######Indicates which ordinals are classified samples
 for(i in 1:length(only_2_3_mut)){
 index1<-grep(only_2_3_mut[i],tumor_sample[,1])
 only_2_3index<-c(only_2_3index,index1)
 }
 only_2_3index_frame<-matrix(0,nrow = dim(tumor_sample)[1],ncol = 2)
 only_2_3index_frame[only_2_3index,]<-1
-only_2_3index_frame[,2]<-tumor_sample[,1]#########1表示分类样本
+only_2_3index_frame[,2]<-tumor_sample[,1]#########1Representation classification sample
 write.table(only_2_3index_frame,file="only_2_3index_frame.txt",col.names = F,row.names = F,sep="\t",quote=F)
 
 ###Mutsig
 #####
-#########共同出现的突变基因
+#########Co-occurring mutated genes
 options(stringsAsFactors=F)
 setwd("E:/NSCLC_TDP/LUAD/mutation")
 LUADonly_2<-read.table(file="only_2_mutation_gene.txt",sep="\t",header = T)
@@ -640,7 +640,7 @@ names(KEGG_result)<-c("LUADonly_2","LUADonly_2_3")
 names(GO_result)<-c("LUADonly_2","LUADonly_2_3")
 save(KEGG_result,GO_result,file="kegg&go.Rdata")
 
-###共同通路
+###Common path
 options(stringsAsFactors=F)
 setwd("E:/NSCLC_TDP/LUAD/mutation")
 load("kegg&go.Rdata")
@@ -671,7 +671,7 @@ pr = pr+labs(color=expression(pvalue),size="Count",
                            x="group",y="Pathway name",title="Pathway enrichment")
 pr + theme_bw()
 
-########mutation map BRCA_only_2_3的免疫通路
+########The immune pathway of mutation map BRCA_only_2_3
 ####only_2_3
 setwd("E:/NSCLC_TDP/LUAD/mutation/only_2_3")
 library(dplyr)
@@ -736,7 +736,7 @@ hotmap<-function(x){
            legend_labels=c("NON","Syn","Missense","Splice Site","Nonsense","Frame Shift","In frame indel","Other non syn"),
            cutree_rows=dim(x)[1],show_colnames=F,treeheight_row=0, treeheight_col=0)
 }
-load('E:/TDP/SNV analysis/all_kegg.Rdata')
+load('all_kegg.Rdata')
 BRCA_only_2_3_kegg<-all_kegg[all_kegg$group==4,]
 library(org.Hs.eg.db)
 k=keys(org.Hs.eg.db,keytype = "ENSEMBL")
@@ -748,7 +748,7 @@ phat <- hotmap(new_genes_tumor_mutation_num)
 
 ##############figure 4
 #########################FPKM&CNV
-############所有LUAD的FPKM
+############LUAD FPKM
 options(stringsAsFactors = F)
 setwd("/Share2/home/lanxun3/jacklee/NSCLC_TDP/LUAD")
 #setwd("E:/TDP/BRCA/TCGA/protein")
@@ -759,7 +759,7 @@ procoding_gene<-read.table(file="/Share2/home/lanxun3/jacklee/NSCLC_TDP/hg_19_pr
 pro_exp<-all_exp[intersect(procoding_gene[,1],rownames(all_exp)),]
 save(pro_exp,file="pro_exp.Rdata")
 
-########载入group_1的拷贝数矩阵
+########group_1
 options(stringsAsFactors = F)
 setwd("/Share2/home/lanxun3/jacklee/NSCLC_TDP/LUAD")
 load("patient_group.Rdata")
@@ -799,9 +799,9 @@ pheatmap(t(new_frame),cluster_cols = F,cluster_rows = F,show_rownames = T,
 color = colorRampPalette(c("#113F8C","white","#AF1E23"))(50),show_colnames = F,main="DEG_SSG&only_2_3")
 dev.off()
 
-###功能富集
-up_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<adj_p & logFC>=fold_chang)), ])##上调的基因集
-down_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<adj_p & logFC<= -fold_chang)), ])##下调的基因集
+###Functional enrichment
+up_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<adj_p & logFC>=fold_chang)), ])##Upregulated gene set
+down_genes<-rownames(DEG_voom[with(DEG_voom, (adj.P.Val<adj_p & logFC<= -fold_chang)), ])##Down-regulated gene set
 
 up_genes_entriz=na.omit(list[match(up_genes,list[,"ENSEMBL"]),][,2])
 down_genes_entriz=na.omit(list[match(down_genes,list[,"ENSEMBL"]),][,2])
@@ -826,7 +826,7 @@ dev.off()
 
 ############figure 5
 ##############CCLE drug
-##########在所有样本数据里识别LUAD的病人拷贝数数据
+##########LUAD patient copy number data was identified in all sample data
 setwd("E:/NSCLC_TDP/CCLE/LUAD")
 options(stringsAsFactors=F)
 LUAD_sample<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUAD_sample.txt",sep="\t",header = T)
@@ -834,20 +834,20 @@ all_sample_cnv<-read.table(file="E:/NSCLC_TDP/CCLE/CNV/CCLE_copynumber_2013-12-0
 LUAD_cnv<-all_sample_cnv[all_sample_cnv$CCLE_name%in%LUAD_sample$CCLE.name,]
 colnames(LUAD_cnv)<-c("sample","chr","start","end","num_probes","value")
 
-#############识别TD
+
 all_cnv<-LUAD_cnv
 sample_name<-unique(all_cnv$sample)
-sample_cnv<-list()##每个样本的CNV信息
+sample_cnv<-list()
 for(i in 1:length(sample_name)){
 sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
 names(sample_cnv)<-sample_name
 
-chr_name<-unique(sample_cnv[[1]]$chr)###23条染色体
-##条件：0.扩增子长度大于100b 1.扩增子 2.比相邻片段log rd >0.3 3.两个相邻片段差距<0.3
-all_sample_chr_cv<-list()###纪录每个病人每条染色体的CNV信息，是否有TD
+chr_name<-unique(sample_cnv[[1]]$chr)
+
+all_sample_chr_cv<-list()
 for(w in 1:length(sample_cnv)){
-sample_chr_cnv<-list()##每个病人的每条染色体的CNV信息
+sample_chr_cnv<-list()
 for(j in 1:length(chr_name)){
 sample_chr_cnv[[j]]<-sample_cnv[[w]][sample_cnv[[w]]$chr==chr_name[j],]
 }
@@ -872,7 +872,7 @@ all_sample_chr_cv[[w]]<-sample_chr_cnv
 names(all_sample_chr_cv)<-sample_name
 
 
-#######计算每个样本的TD总和
+#######Calculate the total of TDS for each sample
 all_TD_frame<-list()
 for(i in 1:length(all_sample_chr_cv)){
 TD_frame<-data.frame()
@@ -883,7 +883,7 @@ TD_frame<-rbind(TD_frame,all_sample_chr_cv[[i]][[j]],stringsAsFactors=F)
 all_TD_frame[[i]]<-TD_frame
 }
 names(all_TD_frame)<-sample_name
-save(all_TD_frame,file="all_TD_frame.Rdata")####纪录每个病人的TD片段
+save(all_TD_frame,file="all_TD_frame.Rdata")####Record each patient's TD segment
 TD_num<-c()
 for(i in 1:length(all_TD_frame)){
 TD_num[i]<-sum(all_TD_frame[[i]]$TD_likegroup)
@@ -891,7 +891,7 @@ TD_num[i]<-sum(all_TD_frame[[i]]$TD_likegroup)
 names(TD_num)<-sample_name
 
 
-####计算每个染色体在所有样本里TD的均值
+####Calculate the mean TD of each chromosome in all samples
 chr_mean<-c()
 for(i in 1:length(chr_name)){
 chr_num<-c()
@@ -903,7 +903,7 @@ chr_mean[i]<-sum(chr_num)/length(all_sample_chr_cv)
 names(chr_mean)<-chr_name
 
 
-##################计算每个样本的TDP score
+##################Calculate the TDP score for each sample
 TDP_score<-c()
 for(i in 1:length(all_sample_chr_cv)){
 chr_abs<-c()
@@ -928,7 +928,7 @@ value_b<-re_TDP_score[["parameters"]][["mean"]][["2"]]
 
 TDP_group<-rownames(dat[dat[,1]> value_b,])
 NonTDP_group<-rownames(dat[dat[,1]<=value_a,])
-##画图
+
 hist(TDP_score,breaks = seq(-2.5,0,0.05),freq = F)
 library(mixtools)
 mixmdl=normalmixEM(TDP_score,mu=re_TDP_score$parameters$mean,sigma=re_TDP_score$parameters$variance$sigmasq,epsilon=1e-3)
@@ -938,9 +938,9 @@ abline(v=value_b,lwd=2,col="red")
 save(TDP_group,NonTDP_group,file="patient_TDP_group.Rdata")
 
 
-##########根据扩增长度划分TDP病人
-TDP_frame<-all_TD_frame[TDP_group]##TDP病人
-span_size_log<-list()##每个样本里TD的长度分布
+##########TDP patients were divided according to amplification length
+TDP_frame<-all_TD_frame[TDP_group]
+span_size_log<-list()
 for(i in 1:length(TDP_frame)){
 test_vec<-TDP_frame[[i]][TDP_frame[[i]]$TD_likegroup==1,]
 span_size<-test_vec$end-test_vec$start
@@ -958,7 +958,7 @@ library(mixtools)
 mixmdl=normalmixEM(all_TD_size,mu=span_size_distri$parameters$mean,sigma=span_size_distri$parameters$variance$sigmasq,epsilon=1e-3)
 plot(mixmdl,which=2)
 
-####类别里的片段范围
+####Range of fragments in a category
 class_0<-range(all_TD_size[span_size_distri$classification==1])##-1~0.414
 class_1<-range(all_TD_size[span_size_distri$classification==c(1,2)])##0.416~0.846
 class_2<-range(all_TD_size[span_size_distri$classification==3])##1.85~2.71
@@ -973,11 +973,11 @@ group_set<-as.data.frame(group_list)
 rownames(group_set)<-c("small_span","class_2","large_span")
 colnames(group_set)<-names(group_list)
 
-####判断病人隶属于哪个组别
-sample_sum<-apply(group_set,2,sum)#####每个病人里1,2,3类的加和
+
+sample_sum<-apply(group_set,2,sum)
 names(sample_sum)<-colnames(group_set)
 
-###比例矩阵，使用1/4来划分属于哪个组别
+
 new_group_list<-matrix(0,nrow=dim(group_set)[1],ncol=dim(group_set)[2])
 for(i in 1:dim(group_set)[2]){
 new_group_list[,i]<-group_set[,i]/sample_sum[i]
@@ -999,7 +999,7 @@ only_3<-setdiff(group_3,unique(union(group_1_3,group_2_3)))
 only_1_2<-setdiff(group_1_2,intersect(intersect(group_1,group_2),group_3))
 only_1_3<-setdiff(group_1_3,intersect(intersect(group_1,group_2),group_3))
 only_2_3<-group_2_3
-######分为6个不同的组别
+
 new_group_list[4,only_1]<-1
 new_group_list[4,only_2]<-2
 new_group_list[4,only_3]<-3
@@ -1012,7 +1012,7 @@ save(NonTDP_group,only_1,only_2,only_3,only_1_2,only_1_3,only_2_3,file="patient_
 
 
 
-##########在不同组别里病人药物的耐受性
+##########Drug tolerance in different groups of patients
 setwd("E:/NSCLC_TDP/CCLE/LUAD")
 options(stringsAsFactors=F)
 LUAD_drug<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUNG_drug.txt",sep="\t",header = T)
