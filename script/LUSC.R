@@ -585,7 +585,7 @@ pheatmap(t(final_effect),cluster_row = FALSE,cluster_col = FALSE,
 options(stringsAsFactors = F)
 setwd(working_dictory)
 load("E:/NSCLC_TDP/LUSC/CNV/patient_group.Rdata")#######Each group of patients
-load("E:/NSCLC_TDP/LUSC/CNV/patient_TDP_group.Rdata")###############
+load("E:/NSCLC_TDP/LUSC/CNV/patient_TDP_group.Rdata")
 group_1<-unique(c(only_1,only_1_2,only_1_3))
 tumor_sample<-read.table(file="tumor_sample.txt",header = T,sep = "\t",stringsAsFactors = F)####all samples
 tumor_sample_1<-strtrim(tumor_sample[,1],16)
@@ -850,7 +850,7 @@ colnames(LUSC_cnv)<-c("sample","chr","start","end","num_probes","value")
 #############
 all_cnv<-LUSC_cnv
 sample_name<-unique(all_cnv$sample)
-sample_cnv<-list()##每个样本的CNV信息
+sample_cnv<-list()
 for(i in 1:length(sample_name)){
 sample_cnv[[i]]<-all_cnv[all_cnv$sample==sample_name[i],]
 }
