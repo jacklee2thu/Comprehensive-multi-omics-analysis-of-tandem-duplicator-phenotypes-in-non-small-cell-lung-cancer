@@ -93,7 +93,7 @@ save(TDP_score,less20_name,file="TDP_score.Rdata")
 
 
 ##########The relationship between TDP score and OS or RFS was simulated and the survival of TDP group was found to be better
-setwd("E:/NSCLC_TDP/LUAD/CNV")
+setwd(working_dictory)
 options(stringsAsFactors=F)
 load("TDP_score.Rdata")
 library(mclust)
@@ -117,7 +117,7 @@ abline(v=value_b,lwd=2,col="red")
 save(TDP_group,NonTDP_group,file="patient_TDP_group.Rdata")
 
 ##########TDP patients were divided according to amplification length
-setwd("E:/NSCLC_TDP/LUAD/CNV")
+setwd(working_dictory)
 load("patient_TDP_group.Rdata")
 load("all_TD_frame.Rdata")
 options(stringsAsFactors=F)
@@ -230,7 +230,7 @@ add = "jitter", shape = "group",ylim =c(0,1000))
 ##########figure 6
 ##clinical informations
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUAD/clin")
+setwd(working_dictory)
 LUAD_clin<-read.table(file="TCGA-LUAD.GDC_phenotype.txt",sep="\t",header=T,na.strings=c("","NA"),quote='')
 rownames(LUAD_clin)<-LUAD_clin[,1]
 
@@ -285,7 +285,7 @@ plot(risk.fit,col = c(2,4,5,6),main=paste("Survival analysis based on TDP signat
 
 ##########figure 2
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUAD/CNV")
+setwd(working_dictory)
 all_cnv<-read.table(file="TCGA-LUAD.masked_cnv.txt",sep="\t",header = T)
 sample_name<-unique(all_cnv$sample)
 sample_cnv<-list()##CNV information for each sample
@@ -436,7 +436,7 @@ effct_matrix[i,test_group[[i]][j,]$sample]<-3
 }
 }
 }
-setwd("E:/NSCLC_TDP/LUAD/amp_effect")
+setwd(working_dictory)
 save(effct_matrix,file="only_2_effctmatrix.Rdata")
 phat <- hotmap(effct_matrix)
 
@@ -536,7 +536,7 @@ effct_matrix[i,test_group[[i]][j,]$sample]<-3
 }
 }
 }
-setwd("E:/NSCLC_TDP/LUAD/amp_effect")
+setwd(working_dictory)
 save(effct_matrix,file="only_2_3_effctmatrix.Rdata")
 phat <- hotmap(effct_matrix)
 
@@ -573,7 +573,7 @@ pheatmap(t(final_effect),cluster_row = FALSE,cluster_col = FALSE,
 ##########figure 3
 ###############Extract the MAF file from the interim sample
 options(stringsAsFactors = F)
-setwd("E:/NSCLC_TDP/LUAD/mutation")
+setwd(working_dictory)
 load("E:/NSCLC_TDP/LUAD/CNV/patient_group.Rdata")#######Each group of patients
 load("E:/NSCLC_TDP/LUAD/CNV/patient_TDP_group.Rdata")
 group_1<-unique(c(only_1,only_1_2,only_1_3))
@@ -607,7 +607,7 @@ write.table(only_2_3index_frame,file="only_2_3index_frame.txt",col.names = F,row
 #####
 #########Co-occurring mutated genes
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUAD/mutation")
+setwd(working_dictory)
 LUADonly_2<-read.table(file="only_2_mutation_gene.txt",sep="\t",header = T)
 LUADonly_2_3<-read.table(file="only_2_3_mutation_gene.txt",sep="\t",header = T)
 
@@ -642,7 +642,7 @@ save(KEGG_result,GO_result,file="kegg&go.Rdata")
 
 ###Common path
 options(stringsAsFactors=F)
-setwd("E:/NSCLC_TDP/LUAD/mutation")
+setwd(working_dictory)
 load("kegg&go.Rdata")
 observed_path<-c('Natural killer cell mediated cytotoxicity','Mitophagy - animal','Toll-like receptor signaling pathway',
 'Autophagy - animal','Antigen processing and presentation','PD-L1 expression and PD-1 checkpoint pathway in cancer')
@@ -673,7 +673,7 @@ pr + theme_bw()
 
 ########The immune pathway of mutation map BRCA_only_2_3
 ####only_2_3
-setwd("E:/NSCLC_TDP/LUAD/mutation/only_2_3")
+setwd(working_dictory)
 library(dplyr)
 new.mutations <- read.table("only_2_3.mutations.txt",header = T,sep = "\t",quote = "",stringsAsFactors = F)
 genes <- only_2_3_mutation
@@ -750,8 +750,7 @@ phat <- hotmap(new_genes_tumor_mutation_num)
 #########################FPKM&CNV
 ############LUAD FPKM
 options(stringsAsFactors = F)
-setwd("/Share2/home/lanxun3/jacklee/NSCLC_TDP/LUAD")
-#setwd("E:/TDP/BRCA/TCGA/protein")
+setwd(working_dictory)
 all_exp<-read.table(file="TCGA-LUAD.htseq_fpkm.txt",sep = "\t",header = T,na.strings = c("NA"," "),quote = "")
 rownames(all_exp)<-strtrim(all_exp[,1],15)
 all_exp<-all_exp[,-1]
@@ -761,7 +760,7 @@ save(pro_exp,file="pro_exp.Rdata")
 
 ########group_1
 options(stringsAsFactors = F)
-setwd("/Share2/home/lanxun3/jacklee/NSCLC_TDP/LUAD")
+setwd(working_dictory)
 load("patient_group.Rdata")
 load('pro_exp.Rdata')
 SSG<-c(only_1_2,only_1_3)
@@ -827,7 +826,7 @@ dev.off()
 ############figure 5
 ##############CCLE drug
 ##########LUAD patient copy number data was identified in all sample data
-setwd("E:/NSCLC_TDP/CCLE/LUAD")
+setwd(working_dictory)
 options(stringsAsFactors=F)
 LUAD_sample<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUAD_sample.txt",sep="\t",header = T)
 all_sample_cnv<-read.table(file="E:/NSCLC_TDP/CCLE/CNV/CCLE_copynumber_2013-12-03.seg.txt",sep="\t",header = T)
@@ -1013,7 +1012,7 @@ save(NonTDP_group,only_1,only_2,only_3,only_1_2,only_1_3,only_2_3,file="patient_
 
 
 ##########Drug tolerance in different groups of patients
-setwd("E:/NSCLC_TDP/CCLE/LUAD")
+setwd(working_dictory)
 options(stringsAsFactors=F)
 LUAD_drug<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUNG_drug.txt",sep="\t",header = T)
 load("patient_group.Rdata")
