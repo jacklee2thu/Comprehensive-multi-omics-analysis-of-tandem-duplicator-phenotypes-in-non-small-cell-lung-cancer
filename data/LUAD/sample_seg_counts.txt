@@ -1,0 +1,3 @@
+sample	segment_count	included
+TCGA-44-2665-01A	113	yes
+TCGA-44-2668-01A	156	yes

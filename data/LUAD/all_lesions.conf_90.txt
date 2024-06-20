@@ -1,0 +1,1 @@
+Unique Name	Descriptor	Wide Peak Limits	Peak Limits	Region Limits	q values	Residual q values after removing segments shared with higher peaks	Broad or Focal	Amplitude Threshold	TCGA-44-2665-01A	TCGA-44-2668-01A	

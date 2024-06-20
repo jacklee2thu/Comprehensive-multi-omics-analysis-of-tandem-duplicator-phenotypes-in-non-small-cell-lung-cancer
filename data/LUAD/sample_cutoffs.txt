@@ -1,0 +1,4 @@
+# Using amp_thresh=0.10, del_thresh=0.10
+Sample	Low	High
+TCGA-44-2665-01A	-0.556000	1.055000
+TCGA-44-2668-01A	-0.381000	0.602000
