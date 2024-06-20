@@ -764,7 +764,6 @@ phat <- hotmap(new_genes_tumor_mutation_num)
 ############All LUSC FPKMS
 options(stringsAsFactors = F)
 setwd(working_dictory)
-#setwd("E:/TDP/BRCA/TCGA/protein")
 all_exp<-read.table(file="TCGA-LUSC.htseq_fpkm.txt",sep = "\t",header = T,na.strings = c("NA"," "),quote = "")
 rownames(all_exp)<-strtrim(all_exp[,1],15)
 all_exp<-all_exp[,-1]
