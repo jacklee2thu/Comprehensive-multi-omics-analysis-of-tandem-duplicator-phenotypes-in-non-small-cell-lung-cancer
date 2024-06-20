@@ -1,0 +1,6 @@
+left	from	change	right	n	N	rate	relrate	autoname	name	type
+ACGT	C	s	ACGT	2922	428698032	6.815987e-06	1.925989e+00	ACGT[C->s]ACGT	C->A	point
+T	AC	tf	ACGT	1874	324405648	5.776718e-06	1.632323e+00	T[AC->tf]ACGT	Tp*N->nonskew	point
+ACG	AC	tf	ACGT	3603	1317133680	2.735485e-06	7.729642e-01	ACG[AC->tf]ACGT	(A/C/G)p*N->nonskew	point
+ACGT	A	s	ACGT	315	392071632	8.034246e-07	2.270231e-01	ACGT[A->s]ACGT	A->C	point
+ACGT	AC	in	ACGT	1075	2462308992	4.365821e-07	1.233647e-01	null+indel	null+indel	non-point
