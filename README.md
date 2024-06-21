@@ -10,7 +10,7 @@ The Tandem Duplicator Phenotype (TDP) stands out as a significant genomic featur
 3. somatic single-nucleotide variations associated files include only_2.mutations.txt, only_2_3.mutations.txt in LUAD, group_1.mutations.txt, only_2_3.mutations.txt in LUSC;
 4. clinical records associated files include TCGA-LUAD.GDC_phenotype.txt, TCGA-LUSC.GDC_phenotype.txt;
 5. transcriptomics associated files include https://xenabrowser.net/datapages/?cohort=GDC%20TCGA%20Lung%20Squamous%20Cell%20Carcinoma%20(LUSC)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443;
-6. cell-line drug sensitivity profiles associated files include https://xenabrowser.net/datapages/?cohort=Cancer%20Cell%20Line%20Encyclopedia%20(CCLE)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443.
+6. cell-line drug sensitivity profiles associated files include LUAD_sample.txt, LUNG_drug.txt, LUSC_sample.txt, lung_sample.txt, and https://xenabrowser.net/datapages/?cohort=Cancer%20Cell%20Line%20Encyclopedia%20(CCLE)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443.
 
 # script parameters
 
