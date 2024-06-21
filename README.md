@@ -5,7 +5,7 @@ The Tandem Duplicator Phenotype (TDP) stands out as a significant genomic featur
 # datasets
 
 76 datasets was deposited in https://github.com/jacklee2thu/Comprehensive-multi-omics-analysis-of-tandem-duplicator-phenotypes-in-non-small-cell-lung-cancer/tree/main/data.
-1. 300 TSGs and 250 OGs classified by Davoli et al. for an in-depth analysis are deposited in TSG.txt and oncogene.txt;
+1. 300 TSGs and 250 OGs classified by Davoli et al.[Cumulative haploinsufficiency and triplosensitivity drive aneuploidy patterns and shape the cancer genome. Cell 155, 948-962, doi:10.1016/j.cell.2013.10.011 (2013)] for an in-depth analysis are deposited in TSG.txt and oncogene.txt;
 2. CNV associtated files include Non_TDP_cnv.txt, group_1_cnv.txt, TCGA-LUAD.masked_cnv.txt, only_1_2_cnv.txt, only_1_3_cnv.txt, only_2_3_cnv.txt, only_2_cnv.txt, only_3_cnv.txt in LUAD. Non_TDP_cnv.txt, TCGA-LUSC.masked_cnv.txt, group_1_cnv.txt, only_1_2_cnv.txt, only_1_3_cnv.txt, only_1_cnv.txt, only_2_3_cnv.txt, only_2_cnv.txt, only_3_cnv.txt in LUSC;
 3. somatic single-nucleotide variations associated files include only_2.mutations.txt, only_2_3.mutations.txt in LUAD, group_1.mutations.txt, only_2_3.mutations.txt in LUSC;
 4. clinical records associated files include TCGA-LUAD.GDC_phenotype.txt, TCGA-LUSC.GDC_phenotype.txt;
