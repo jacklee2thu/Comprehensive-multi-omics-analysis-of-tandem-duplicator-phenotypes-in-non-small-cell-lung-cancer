@@ -319,7 +319,7 @@ all_sample_chr_cv[[w]]<-sample_chr_cnv
 names(all_sample_chr_cv)<-sample_name
 
 
-load("E:/NSCLC_TDP/LUSC/CNV/patient_group.Rdata")
+load("patient_group.Rdata")
 group_1<-unique(c(only_1,only_1_2,only_1_3))
 
 
@@ -584,8 +584,8 @@ pheatmap(t(final_effect),cluster_row = FALSE,cluster_col = FALSE,
 ###############Extract the MAF file from the interim sample
 options(stringsAsFactors = F)
 setwd(working_dictory)
-load("E:/NSCLC_TDP/LUSC/CNV/patient_group.Rdata")#######Each group of patients
-load("E:/NSCLC_TDP/LUSC/CNV/patient_TDP_group.Rdata")
+load("patient_group.Rdata")#######Each group of patients
+load("patient_TDP_group.Rdata")
 group_1<-unique(c(only_1,only_1_2,only_1_3))
 tumor_sample<-read.table(file="tumor_sample.txt",header = T,sep = "\t",stringsAsFactors = F)####all samples
 tumor_sample_1<-strtrim(tumor_sample[,1],16)
@@ -622,8 +622,8 @@ LUSCgroup_1<-read.table(file="group_1_mutation_gene.txt",sep="\t",header = T)
 LUSConly_2_3<-read.table(file="only_2_3_mutation_gene.txt",sep="\t",header = T)
 
 
-OGgene<-read.table(file="E:/TDP/oncogene.txt",sep ="\t",header = T)
-TSGgene<-read.table(file="E:/TDP/TSG.txt",sep="\t",header = T)
+OGgene<-read.table(file="oncogene.txt",sep ="\t",header = T)
+TSGgene<-read.table(file="TSG.txt",sep="\t",header = T)
 group_1_mutation<-c(intersect(LUSCgroup_1[,1],OGgene[,1]),intersect(LUSCgroup_1[,1],TSGgene[,1]))
 only_2_3_mutation<-c(intersect(LUSConly_2_3[,1],OGgene[,1]),intersect(LUSConly_2_3[,1],TSGgene[,1]))
 
@@ -767,7 +767,7 @@ setwd(working_dictory)
 all_exp<-read.table(file="TCGA-LUSC.htseq_fpkm.txt",sep = "\t",header = T,na.strings = c("NA"," "),quote = "")
 rownames(all_exp)<-strtrim(all_exp[,1],15)
 all_exp<-all_exp[,-1]
-procoding_gene<-read.table(file="/Share2/home/lanxun3/jacklee/NSCLC_TDP/hg_19_pro.txt",sep = "\t",header = T,na.strings = c("NA"," "),quote = "")
+procoding_gene<-read.table(file="hg_19_pro.txt",sep = "\t",header = T,na.strings = c("NA"," "),quote = "")
 pro_exp<-all_exp[intersect(procoding_gene[,1],rownames(all_exp)),]
 save(pro_exp,file="pro_exp.Rdata")
 
@@ -841,8 +841,8 @@ dev.off()
 ##########LUSC patient copy number data was identified in all sample data
 setwd(working_dictory)
 options(stringsAsFactors=F)
-LUSC_sample<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUSC_sample.txt",sep="\t",header = T)
-all_sample_cnv<-read.table(file="E:/NSCLC_TDP/CCLE/CNV/CCLE_copynumber_2013-12-03.seg.txt",sep="\t",header = T)
+LUSC_sample<-read.table(file="LUSC_sample.txt",sep="\t",header = T)
+all_sample_cnv<-read.table(file="CCLE_copynumber_2013-12-03.seg.txt",sep="\t",header = T)
 LUSC_cnv<-all_sample_cnv[all_sample_cnv$CCLE_name%in%LUSC_sample$CCLE.name,]
 colnames(LUSC_cnv)<-c("sample","chr","start","end","num_probes","value")
 
@@ -1026,7 +1026,7 @@ save(NonTDP_group,only_1,only_2,only_3,only_1_2,only_1_3,only_2_3,file="patient_
 ##########Drug tolerance in different groups of patients
 setwd(working_dictory)
 options(stringsAsFactors=F)
-LUSC_drug<-read.table(file="E:/NSCLC_TDP/CCLE/clin/LUNG_drug.txt",sep="\t",header = T)
+LUSC_drug<-read.table(file="LUNG_drug.txt",sep="\t",header = T)
 load("patient_group.Rdata")
 drug_list<-list()
 for(i in 1:length(unique(LUSC_drug$Compound))){
